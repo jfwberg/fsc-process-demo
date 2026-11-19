@@ -47,7 +47,7 @@ Namespace: wt
 ```bash
 sf package version create \
   --package "FSC Process Demo" \
-  --target-dev-hub jfwberg \
+  --target-dev-hub devhub \
   --code-coverage \
   --installation-key-bypass \
   --wait 30 \
