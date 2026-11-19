@@ -1,0 +1,28 @@
+{
+  "packageDirectories": [
+    {
+      "versionName": "68.0 - v0.2",
+      "versionNumber": "0.2.0.NEXT",
+      "path": "force-app",
+      "default": true,
+      "package": "FSC Process Demo",
+      "versionDescription": "FSC Process Demo is an example Lightning Web Component that demonstrates authenticated Lightning Out 2.0 components communicating with an MCP client through the MCP App Bridge.",
+      "ancestorVersion": "HIGHEST",
+      "dependencies": [
+        {
+          "package": "MCP App Bridge@0.11.0-1"
+        }
+      ]
+    }
+  ],
+  "name": "fsc-process-demo",
+  "namespace": "wt",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "68.0",
+  "packageAliases": {
+    "MCP App Bridge@0.11.0-1": "04tP3000002Ke1lIAC",
+    "FSC Process Demo": "0Hoak0000007hUrCAI",
+    "FSC Process Demo@0.1.0-1": "04tak000000v39FAAQ",
+    "FSC Process Demo@0.2.0-1": "04tak000000vJCPAA2"
+  }
+}

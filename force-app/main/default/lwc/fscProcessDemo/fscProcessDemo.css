@@ -1,0 +1,452 @@
+/* ── Root ───────────────────────────────────────────────────────────────── */
+.fsc-demo-root {
+    font-family: var(--lwc-fontFamily, 'Salesforce Sans', Arial, sans-serif);
+    min-height: 100vh;
+    background: #f3f2f2;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.slds-card {
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: visible;
+}
+/* SLDS base stylesheet sets overflow:hidden on card body — override so
+   lightning-flow footer buttons are not clipped                         */
+.slds-card__body {
+    overflow: visible;
+}
+
+/* ── Card Header ──────────────────────────────────────────────────────────── */
+.slds-card__header {
+    padding: 1rem 1rem 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+.client-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    background: #f4f6f9;
+    border: 1px solid #c9d6e3;
+    border-radius: 999px;
+    color: #3e3e3c;
+    white-space: nowrap;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────────────────────── */
+.tab-nav {
+    margin: 0 1.5rem;
+    border-bottom: 2px solid #e8e8e8;
+}
+.slds-tabs_default__nav {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+}
+.slds-tabs_default__item {
+    cursor: pointer;
+    /* underline lives here — only as wide as the <li> content */
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px; /* sit on top of tab-nav border */
+    margin-right: 0;
+    transition: border-color 0.15s, color 0.15s;
+}
+.slds-tabs_default__item.slds-is-active {
+    border-bottom-color: #0176d3;
+}
+.slds-tabs_default__link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: #706e6b;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    white-space: nowrap;
+}
+.slds-tabs_default__item.slds-is-active .slds-tabs_default__link {
+    color: #0176d3;
+    font-weight: 700;
+}
+.slds-tabs_default__link:hover { color: #0176d3; }
+
+/* ── Process Container ────────────────────────────────────────────────────── */
+.process-container { padding: 1.5rem 1.5rem 1.5rem; }
+
+/* lightning-flow renders its own footer buttons — no height cap or overflow
+   clipping or the Next/Back/Finish buttons will be hidden                    */
+.flow-container {
+    min-height: 300px;
+    overflow: visible;
+}
+.flow-container lightning-flow {
+    display: block;
+    overflow: visible;
+}
+
+.flow-result-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid #2e844a;
+    background: #cdefc4;
+    color: #1b1b1b;
+    font-size: 0.875rem;
+}
+
+/* ── Step Progress ────────────────────────────────────────────────────────── */
+.step-progress {
+    display: flex;
+    align-items: flex-start;
+    padding: 0 2rem;       /* pull circles in from edge so connectors don't clip */
+    margin-bottom: 2rem;
+}
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;    /* anchor for the absolute connector */
+    flex: 1;
+    min-width: 0;
+}
+.step-circle {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    background: #f3f2f2;
+    color: #c9c9c9;
+    border: 2px solid #d8d8d8;
+    position: relative;    /* sits above the connector line */
+    z-index: 1;
+    flex-shrink: 0;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.step-circle.step-active {
+    background: #0176d3;
+    color: #fff;
+    border-color: #0176d3;
+    box-shadow: 0 0 0 5px rgba(1, 118, 211, 0.18);
+}
+.step-circle.step-done {
+    background: #2e844a;
+    color: #fff;
+    border-color: #2e844a;
+}
+.step-label {
+    font-size: 0.6875rem;
+    color: #939393;
+    margin-top: 0.5rem;
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+}
+.step-label-active { color: #0176d3; font-weight: 700; }
+.step-label-done   { color: #2e844a; font-weight: 600; }
+
+/* Connector spans from right edge of THIS circle to right edge of THIS step-item
+   (which aligns with the left edge of the next step's circle).               */
+.step-connector {
+    position: absolute;
+    top: calc(1.125rem - 1px);    /* half of 2.25rem circle, minus half line */
+    left: calc(50% + 1.125rem);   /* right edge of this circle */
+    width: calc(100% - 2.25rem);  /* step width minus one full circle diameter */
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 0;
+}
+.step-connector-done { background: #2e844a; }
+
+/* ── Step Panel ───────────────────────────────────────────────────────────── */
+.step-panel {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 0.625rem;
+    padding: 2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    animation: fadeIn 0.2s ease-in;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.step-title {
+    display: flex;
+    align-items: center;
+    color: #1b1b1b;
+    font-size: 1rem;
+    font-weight: 700;
+    border-bottom: 1px solid #f3f2f2;
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+/* ── Action Row ───────────────────────────────────────────────────────────── */
+.action-row   { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem; padding-top: 0.5rem; border-top: 1px solid #f3f2f2; margin-top: 1.5rem; }
+.decision-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+
+/* ── Risk Score ───────────────────────────────────────────────────────────── */
+.risk-score-container { display: flex; align-items: center; }
+.risk-score-card {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+}
+.risk-score-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.risk-score-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+.risk-score-label {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #939393;
+    margin-top: 0.25rem;
+}
+.risk-low    .risk-score-number { color: #2e844a; }
+.risk-medium .risk-score-number { color: #c66e08; }
+.risk-high   .risk-score-number { color: #ba0517; }
+
+/* ── Badges ───────────────────────────────────────────────────────────────── */
+.badge-success { background: #cdefc4 !important; color: #2e844a !important; border: 1px solid #91db8b; }
+.badge-warning { background: #fce5b3 !important; color: #7d4e00 !important; border: 1px solid #f5c65f; }
+.badge-danger  { background: #fdd9d7 !important; color: #ba0517 !important; border: 1px solid #f98784; }
+
+/* ── Color utilities ──────────────────────────────────────────────────────── */
+.color-success { color: #2e844a !important; font-weight: 700; }
+.color-warning { color: #c66e08 !important; font-weight: 700; }
+.color-danger  { color: #ba0517 !important; font-weight: 700; }
+
+/* ── Summary Card ─────────────────────────────────────────────────────────── */
+.summary-card {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+.summary-header {
+    background: #0176d3;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    padding: 0.6rem 1rem;
+}
+.summary-grid { padding: 0.5rem 1rem; }
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #f3f2f2;
+    font-size: 0.875rem;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-label { color: #706e6b; }
+.summary-value { font-weight: 600; color: #1b1b1b; }
+.rate-highlight { color: #0176d3; font-size: 1rem; }
+
+/* ── Decision Banners ─────────────────────────────────────────────────────── */
+.decision-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid;
+    font-size: 0.875rem;
+}
+.banner-success { background: #cdefc4; border-color: #2e844a; color: #1b1b1b; }
+.banner-warning { background: #fce5b3; border-color: #c66e08; color: #1b1b1b; }
+.banner-danger  { background: #fdd9d7; border-color: #ba0517; color: #1b1b1b; }
+
+/* ── DTI / LTV Gauges ─────────────────────────────────────────────────────── */
+.metric-gauge {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+.gauge-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #3e3e3c;
+}
+.gauge-bar {
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+.gauge-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+.gauge-fill-success { background: #2e844a; }
+.gauge-fill-warning { background: #c66e08; }
+.gauge-fill-danger  { background: #ba0517; }
+.gauge-legend {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.4rem;
+    font-size: 0.6875rem;
+    color: #706e6b;
+}
+.legend-good     { color: #2e844a; }
+.legend-moderate { color: #c66e08; }
+.legend-high     { color: #ba0517; }
+
+/* ── Activity Log ─────────────────────────────────────────────────────────── */
+.activity-section {
+    border-top: 1px solid #e0e0e0;
+    overflow: hidden;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.activity-toggle-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    background: #f9f9f9;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+    gap: 0;
+}
+.activity-toggle-bar:hover { background: #f3f2f2; }
+
+.activity-toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.activity-toggle-icon { color: #706e6b; flex-shrink: 0; }
+.activity-toggle-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #3e3e3c;
+    letter-spacing: 0.01em;
+}
+.activity-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.375rem;
+    height: 1.375rem;
+    padding: 0 0.35rem;
+    background: #0176d3;
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    border-radius: 999px;
+    line-height: 1;
+}
+.activity-toggle-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.version-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #706e6b;
+    background: #e8e8e8;
+    border-radius: 999px;
+    padding: 0.1rem 0.45rem;
+    letter-spacing: 0.03em;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+}
+.activity-chevron { color: #706e6b; flex-shrink: 0; }
+
+/* Console panel */
+.activity-console {
+    background: #161b22;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 0;
+    animation: slideDown 0.18s ease-out;
+    scroll-behavior: smooth;
+}
+@keyframes slideDown {
+    from { opacity: 0; max-height: 0; }
+    to   { opacity: 1; max-height: 320px; }
+}
+
+.activity-entry {
+    padding: 0.875rem 1.5rem;
+    border-bottom: 1px solid #21262d;
+    transition: background 0.1s;
+}
+.activity-entry:last-child { border-bottom: none; }
+.activity-entry:hover { background: #1c2128; }
+
+.activity-entry-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+}
+.activity-time {
+    font-size: 0.6875rem;
+    color: #6e7681;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    flex-shrink: 0;
+    letter-spacing: 0.03em;
+}
+.activity-label {
+    font-size: 0.75rem;
+    color: #58a6ff;
+    font-weight: 700;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+}
+.activity-detail {
+    font-size: 0.6875rem;
+    color: #7ee787;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+    line-height: 1.6;
+    padding-left: 0.25rem;
+    border-left: 2px solid #30363d;
+}
+.activity-empty {
+    padding: 1.5rem;
+    color: #6e7681;
+    font-size: 0.8125rem;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    text-align: center;
+}
+
+/* ── Responsive tweaks ────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .slds-tabs_default__item { margin-right: 0.75rem; }
+    .step-label               { display: none; }
+    .summary-row              { flex-direction: column; align-items: flex-start; }
+    .decision-row             { flex-direction: column; align-items: stretch; }
+}

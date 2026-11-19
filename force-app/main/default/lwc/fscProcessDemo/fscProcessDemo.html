@@ -1,0 +1,873 @@
+<template>
+    <div class="fsc-demo-root">
+        <!-- Card Header -->
+        <div class="slds-card">
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center">
+                        <lightning-icon icon-name="standard:financial_account" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            <span class="slds-text-heading_medium">{cardTitle}</span>
+                        </h2>
+                        <p class="slds-text-body_small slds-text-color_weak">{cardSubtitle}</p>
+                    </div>
+                    <div class="slds-no-flex">
+                        <template if:true={clientIdDisplay}>
+                            <span class="slds-badge slds-badge_lightest client-badge">
+                                <lightning-icon icon-name="standard:person_account" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                                {clientIdDisplay}
+                            </span>
+                        </template>
+                    </div>
+                </header>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="slds-card__body">
+                <div class="tab-nav">
+                    <ul class="slds-tabs_default__nav" role="tablist">
+                        <li class={kycTabClass} role="presentation">
+                            <a class="slds-tabs_default__link" role="tab" onclick={handleTabKyc}>
+                                <lightning-icon icon-name="standard:identity_document" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                KYC &amp; Onboarding
+                            </a>
+                        </li>
+                        <li class={loanTabClass} role="presentation">
+                            <a class="slds-tabs_default__link" role="tab" onclick={handleTabLoan}>
+                                <lightning-icon icon-name="standard:loan" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                Loan Application
+                            </a>
+                        </li>
+                        <li class={flowTabClass} role="presentation">
+                            <a class="slds-tabs_default__link" role="tab" onclick={handleTabFlow}>
+                                <lightning-icon icon-name="standard:flow" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                Flow
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- ═══════════════════════════════════════════ -->
+                <!-- TAB 1: KYC & Onboarding                    -->
+                <!-- ═══════════════════════════════════════════ -->
+                <template if:true={isKycTab}>
+                    <div class="process-container">
+
+                        <!-- Step Progress -->
+                        <div class="step-progress slds-m-bottom_large">
+                            <template for:each={kycSteps} for:item="step">
+                                <div key={step.id} class={step.containerClass}>
+                                    <div class={step.circleClass}>
+                                        <template if:true={step.isDone}>
+                                            <lightning-icon icon-name="utility:check" size="x-small" alternative-text="Done"></lightning-icon>
+                                        </template>
+                                        <template if:false={step.isDone}>
+                                            <span>{step.number}</span>
+                                        </template>
+                                    </div>
+                                    <span class={step.labelClass}>{step.label}</span>
+                                    <template if:false={step.isLast}>
+                                        <div class={step.connectorClass}></div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- STEP 1: Client Information -->
+                        <template if:true={isKycStep1}>
+                            <div class="step-panel">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium step-title">
+                                    <lightning-icon icon-name="utility:user" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                    Client Information
+                                </h3>
+                                <div class="slds-grid slds-wrap slds-gutters_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Full Legal Name"
+                                            value={kyc.clientName}
+                                            placeholder="e.g. Alexandra James"
+                                            onchange={handleKycField}
+                                            data-field="clientName"
+                                            required>
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            type="date"
+                                            label="Date of Birth"
+                                            value={kyc.dateOfBirth}
+                                            onchange={handleKycField}
+                                            data-field="dateOfBirth"
+                                            required>
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Nationality"
+                                            value={kyc.nationality}
+                                            options={nationalityOptions}
+                                            onchange={handleKycField}
+                                            data-field="nationality"
+                                            placeholder="Select nationality"
+                                            required>
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Client Type"
+                                            value={kyc.clientType}
+                                            options={clientTypeOptions}
+                                            onchange={handleKycField}
+                                            data-field="clientType"
+                                            placeholder="Select type">
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Email Address"
+                                            type="email"
+                                            value={kyc.email}
+                                            placeholder="client@example.com"
+                                            onchange={handleKycField}
+                                            data-field="email">
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Process Start Date"
+                                            type="date"
+                                            value={kyc.startDate}
+                                            onchange={handleKycField}
+                                            data-field="startDate">
+                                        </lightning-input>
+                                    </div>
+                                </div>
+                                <div class="slds-m-top_medium action-row">
+                                    <lightning-button
+                                        variant="brand"
+                                        label="Next: Document Verification"
+                                        icon-name="utility:forward"
+                                        icon-position="right"
+                                        onclick={handleKycNext}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- STEP 2: Document Verification -->
+                        <template if:true={isKycStep2}>
+                            <div class="step-panel">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium step-title">
+                                    <lightning-icon icon-name="utility:document" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                    Document Verification
+                                </h3>
+                                <div class="slds-grid slds-wrap slds-gutters_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Document Type"
+                                            value={kyc.docType}
+                                            options={docTypeOptions}
+                                            onchange={handleKycField}
+                                            data-field="docType"
+                                            required>
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Document Number"
+                                            value={kyc.docNumber}
+                                            placeholder="e.g. AB123456"
+                                            onchange={handleKycField}
+                                            data-field="docNumber"
+                                            required>
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Issue Date"
+                                            type="date"
+                                            value={kyc.docIssueDate}
+                                            onchange={handleKycField}
+                                            data-field="docIssueDate">
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Expiry Date"
+                                            type="date"
+                                            value={kyc.docExpiryDate}
+                                            onchange={handleKycField}
+                                            data-field="docExpiryDate"
+                                            required>
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Issuing Country"
+                                            value={kyc.docIssuingCountry}
+                                            placeholder="e.g. Netherlands"
+                                            onchange={handleKycField}
+                                            data-field="docIssuingCountry">
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Verification Status"
+                                            value={kyc.docVerificationStatus}
+                                            options={verificationStatusOptions}
+                                            onchange={handleKycField}
+                                            data-field="docVerificationStatus">
+                                        </lightning-combobox>
+                                    </div>
+                                </div>
+                                <div class="slds-m-top_medium action-row">
+                                    <lightning-button
+                                        label="Back"
+                                        onclick={handleKycBack}
+                                        class="slds-m-right_small">
+                                    </lightning-button>
+                                    <lightning-button
+                                        variant="brand"
+                                        label="Next: Risk Assessment"
+                                        icon-name="utility:forward"
+                                        icon-position="right"
+                                        onclick={handleKycNext}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- STEP 3: Risk Assessment -->
+                        <template if:true={isKycStep3}>
+                            <div class="step-panel">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium step-title">
+                                    <lightning-icon icon-name="utility:shield" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                    Risk Assessment
+                                </h3>
+
+                                <!-- Risk Score Display -->
+                                <div class="risk-score-container slds-m-bottom_medium">
+                                    <div class="risk-score-card">
+                                        <div class={riskScoreClass}>
+                                            <span class="risk-score-number">{kyc.riskScore}</span>
+                                            <span class="risk-score-label">Risk Score</span>
+                                        </div>
+                                        <div class="risk-rating-badge">
+                                            <span class={riskRatingBadgeClass}>{kyc.riskRating}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="slds-grid slds-wrap slds-gutters_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="PEP Status"
+                                            value={kyc.pepStatus}
+                                            options={pepStatusOptions}
+                                            onchange={handleKycRiskChange}
+                                            data-field="pepStatus">
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Sanctions Check"
+                                            value={kyc.sanctionsCheck}
+                                            options={sanctionsOptions}
+                                            onchange={handleKycRiskChange}
+                                            data-field="sanctionsCheck">
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Source of Funds"
+                                            value={kyc.sourceOfFunds}
+                                            options={sourceOfFundsOptions}
+                                            onchange={handleKycRiskChange}
+                                            data-field="sourceOfFunds">
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Country Risk"
+                                            value={kyc.countryRisk}
+                                            options={countryRiskOptions}
+                                            onchange={handleKycRiskChange}
+                                            data-field="countryRisk">
+                                        </lightning-combobox>
+                                    </div>
+                                </div>
+
+                                <div class="slds-m-top_medium action-row">
+                                    <lightning-button
+                                        label="Back"
+                                        onclick={handleKycBack}
+                                        class="slds-m-right_small">
+                                    </lightning-button>
+                                    <lightning-button
+                                        variant="brand"
+                                        label="Proceed to Decision"
+                                        icon-name="utility:forward"
+                                        icon-position="right"
+                                        onclick={handleKycNext}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- STEP 4: Compliance Decision -->
+                        <template if:true={isKycStep4}>
+                            <div class="step-panel">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium step-title">
+                                    <lightning-icon icon-name="utility:approval" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                    Compliance Decision
+                                </h3>
+
+                                <!-- Summary Card -->
+                                <div class="summary-card slds-m-bottom_medium">
+                                    <div class="summary-header">KYC Summary — {kyc.clientName}</div>
+                                    <div class="summary-grid">
+                                        <div class="summary-row">
+                                            <span class="summary-label">Client Type</span>
+                                            <span class="summary-value">{kyc.clientType}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Nationality</span>
+                                            <span class="summary-value">{kyc.nationality}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Document</span>
+                                            <span class="summary-value">{kyc.docType} — {kyc.docNumber}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">PEP Status</span>
+                                            <span class="summary-value">{kyc.pepStatus}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Sanctions</span>
+                                            <span class="summary-value">{kyc.sanctionsCheck}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Risk Score</span>
+                                            <span class={riskScoreInlineClass}>{kyc.riskScore} — {kyc.riskRating}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Decision Buttons -->
+                                <div class="decision-row slds-m-bottom_medium">
+                                    <lightning-button
+                                        variant="success"
+                                        label="Approve Onboarding"
+                                        icon-name="utility:check"
+                                        onclick={handleKycApprove}
+                                        class="slds-m-right_small">
+                                    </lightning-button>
+                                    <lightning-button
+                                        variant="neutral"
+                                        label="Request More Info"
+                                        icon-name="utility:questions_and_answers"
+                                        onclick={handleKycReview}
+                                        class="slds-m-right_small">
+                                    </lightning-button>
+                                    <lightning-button
+                                        variant="destructive"
+                                        label="Reject"
+                                        icon-name="utility:close"
+                                        onclick={handleKycReject}>
+                                    </lightning-button>
+                                </div>
+
+                                <!-- Result Banner -->
+                                <template if:true={kyc.decision}>
+                                    <div class={kycDecisionBannerClass}>
+                                        <lightning-icon icon-name={kycDecisionIcon} size="small" class="slds-m-right_small"></lightning-icon>
+                                        <div>
+                                            <strong>{kyc.decision}</strong>
+                                            <p class="slds-m-top_xx-small">{kyc.decisionNote}</p>
+                                        </div>
+                                    </div>
+                                    <div class="slds-m-top_medium action-row">
+                                        <lightning-button
+                                            variant="brand"
+                                            label="Send Result to Chat"
+                                            icon-name="utility:chat"
+                                            icon-position="right"
+                                            onclick={handleKycSendToChat}>
+                                        </lightning-button>
+                                        <lightning-button
+                                            label="Start New KYC"
+                                            icon-name="utility:refresh"
+                                            onclick={handleKycReset}
+                                            class="slds-m-left_small">
+                                        </lightning-button>
+                                    </div>
+                                </template>
+
+                                <template if:false={kyc.decision}>
+                                    <div class="slds-m-top_medium">
+                                        <lightning-button label="Back" onclick={handleKycBack}></lightning-button>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- ═══════════════════════════════════════════ -->
+                <!-- TAB 2: Loan Application                    -->
+                <!-- ═══════════════════════════════════════════ -->
+                <template if:true={isLoanTab}>
+                    <div class="process-container">
+
+                        <!-- Step Progress -->
+                        <div class="step-progress slds-m-bottom_large">
+                            <template for:each={loanSteps} for:item="step">
+                                <div key={step.id} class={step.containerClass}>
+                                    <div class={step.circleClass}>
+                                        <template if:true={step.isDone}>
+                                            <lightning-icon icon-name="utility:check" size="x-small" alternative-text="Done"></lightning-icon>
+                                        </template>
+                                        <template if:false={step.isDone}>
+                                            <span>{step.number}</span>
+                                        </template>
+                                    </div>
+                                    <span class={step.labelClass}>{step.label}</span>
+                                    <template if:false={step.isLast}>
+                                        <div class={step.connectorClass}></div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- LOAN STEP 1: Loan Parameters -->
+                        <template if:true={isLoanStep1}>
+                            <div class="step-panel">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium step-title">
+                                    <lightning-icon icon-name="utility:money" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                    Loan Parameters
+                                </h3>
+                                <div class="slds-grid slds-wrap slds-gutters_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Applicant Name"
+                                            value={loan.applicantName}
+                                            placeholder="e.g. Thomas de Vries"
+                                            onchange={handleLoanField}
+                                            data-field="applicantName"
+                                            required>
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Loan Purpose"
+                                            value={loan.purpose}
+                                            options={loanPurposeOptions}
+                                            onchange={handleLoanField}
+                                            data-field="purpose"
+                                            required>
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Loan Amount (€)"
+                                            type="number"
+                                            value={loan.amount}
+                                            formatter="currency"
+                                            onchange={handleLoanField}
+                                            data-field="amount"
+                                            min="10000"
+                                            max="2000000"
+                                            required>
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Loan Term"
+                                            value={loan.termYears}
+                                            options={loanTermOptions}
+                                            onchange={handleLoanField}
+                                            data-field="termYears"
+                                            required>
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Requested Rate (%)"
+                                            type="number"
+                                            value={loan.requestedRate}
+                                            step="0.1"
+                                            min="0.5"
+                                            max="15"
+                                            onchange={handleLoanField}
+                                            data-field="requestedRate">
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Application Date"
+                                            type="date"
+                                            value={loan.applicationDate}
+                                            onchange={handleLoanField}
+                                            data-field="applicationDate">
+                                        </lightning-input>
+                                    </div>
+                                </div>
+                                <div class="slds-m-top_medium action-row">
+                                    <lightning-button
+                                        variant="brand"
+                                        label="Next: Financial Assessment"
+                                        icon-name="utility:forward"
+                                        icon-position="right"
+                                        onclick={handleLoanNext}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- LOAN STEP 2: Financial Assessment -->
+                        <template if:true={isLoanStep2}>
+                            <div class="step-panel">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium step-title">
+                                    <lightning-icon icon-name="utility:graph" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                    Financial Assessment
+                                </h3>
+                                <div class="slds-grid slds-wrap slds-gutters_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Annual Gross Income (€)"
+                                            type="number"
+                                            value={loan.annualIncome}
+                                            onchange={handleLoanFinancialChange}
+                                            data-field="annualIncome"
+                                            required>
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Existing Monthly Debt (€)"
+                                            type="number"
+                                            value={loan.existingDebt}
+                                            onchange={handleLoanFinancialChange}
+                                            data-field="existingDebt">
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Employment Status"
+                                            value={loan.employmentStatus}
+                                            options={employmentOptions}
+                                            onchange={handleLoanFinancialChange}
+                                            data-field="employmentStatus">
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Years Employed"
+                                            type="number"
+                                            value={loan.yearsEmployed}
+                                            min="0"
+                                            max="50"
+                                            onchange={handleLoanFinancialChange}
+                                            data-field="yearsEmployed">
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Credit Score"
+                                            type="number"
+                                            value={loan.creditScore}
+                                            min="300"
+                                            max="850"
+                                            onchange={handleLoanFinancialChange}
+                                            data-field="creditScore">
+                                        </lightning-input>
+                                    </div>
+                                </div>
+
+                                <!-- DTI Gauge -->
+                                <template if:true={loan.dtiRatio}>
+                                    <div class="metric-gauge slds-m-top_medium">
+                                        <div class="gauge-label">
+                                            Debt-to-Income Ratio
+                                            <span class={dtiClass}>{loan.dtiRatio}%</span>
+                                        </div>
+                                        <div class="gauge-bar">
+                                            <div class={dtiBarClass} style={dtiBarStyle}></div>
+                                        </div>
+                                        <div class="gauge-legend">
+                                            <span class="legend-good">0–28% Good</span>
+                                            <span class="legend-moderate">29–36% Moderate</span>
+                                            <span class="legend-high">37%+ High</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <div class="slds-m-top_medium action-row">
+                                    <lightning-button label="Back" onclick={handleLoanBack} class="slds-m-right_small"></lightning-button>
+                                    <lightning-button
+                                        variant="brand"
+                                        label="Next: Collateral"
+                                        icon-name="utility:forward"
+                                        icon-position="right"
+                                        onclick={handleLoanNext}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- LOAN STEP 3: Collateral -->
+                        <template if:true={isLoanStep3}>
+                            <div class="step-panel">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium step-title">
+                                    <lightning-icon icon-name="utility:home" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                    Collateral &amp; Security
+                                </h3>
+                                <div class="slds-grid slds-wrap slds-gutters_small">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-combobox
+                                            label="Collateral Type"
+                                            value={loan.collateralType}
+                                            options={collateralOptions}
+                                            onchange={handleLoanCollateralChange}
+                                            data-field="collateralType">
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Collateral Value (€)"
+                                            type="number"
+                                            value={loan.collateralValue}
+                                            onchange={handleLoanCollateralChange}
+                                            data-field="collateralValue">
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Collateral Address / Reference"
+                                            value={loan.collateralRef}
+                                            placeholder="Property address or asset ref"
+                                            onchange={handleLoanField}
+                                            data-field="collateralRef">
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                        <lightning-input
+                                            label="Guarantor Name (optional)"
+                                            value={loan.guarantorName}
+                                            onchange={handleLoanField}
+                                            data-field="guarantorName">
+                                        </lightning-input>
+                                    </div>
+                                </div>
+
+                                <!-- LTV Gauge -->
+                                <template if:true={loan.ltvRatio}>
+                                    <div class="metric-gauge slds-m-top_medium">
+                                        <div class="gauge-label">
+                                            Loan-to-Value Ratio
+                                            <span class={ltvClass}>{loan.ltvRatio}%</span>
+                                        </div>
+                                        <div class="gauge-bar">
+                                            <div class={ltvBarClass} style={ltvBarStyle}></div>
+                                        </div>
+                                        <div class="gauge-legend">
+                                            <span class="legend-good">0–60% Excellent</span>
+                                            <span class="legend-moderate">61–80% Standard</span>
+                                            <span class="legend-high">81%+ High Risk</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <div class="slds-m-top_medium action-row">
+                                    <lightning-button label="Back" onclick={handleLoanBack} class="slds-m-right_small"></lightning-button>
+                                    <lightning-button
+                                        variant="brand"
+                                        label="Proceed to Underwriting"
+                                        icon-name="utility:forward"
+                                        icon-position="right"
+                                        onclick={handleLoanNext}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- LOAN STEP 4: Underwriting Decision -->
+                        <template if:true={isLoanStep4}>
+                            <div class="step-panel">
+                                <h3 class="slds-text-heading_small slds-m-bottom_medium step-title">
+                                    <lightning-icon icon-name="utility:contract_alt" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                    Underwriting Decision
+                                </h3>
+
+                                <!-- Loan Summary -->
+                                <div class="summary-card slds-m-bottom_medium">
+                                    <div class="summary-header">Loan Summary — {loan.applicantName}</div>
+                                    <div class="summary-grid">
+                                        <div class="summary-row">
+                                            <span class="summary-label">Amount</span>
+                                            <span class="summary-value">€ {loanAmountFormatted}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Purpose</span>
+                                            <span class="summary-value">{loan.purpose}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Term</span>
+                                            <span class="summary-value">{loan.termYears} years</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Annual Income</span>
+                                            <span class="summary-value">€ {loanIncomeFormatted}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">DTI Ratio</span>
+                                            <span class={dtiClass}>{loan.dtiRatio}%</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">LTV Ratio</span>
+                                            <span class={ltvClass}>{loan.ltvRatio}%</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Credit Score</span>
+                                            <span class="summary-value">{loan.creditScore}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Suggested Rate</span>
+                                            <span class="summary-value rate-highlight">{loan.suggestedRate}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Decision Buttons -->
+                                <div class="decision-row slds-m-bottom_medium">
+                                    <lightning-button
+                                        variant="success"
+                                        label="Approve Loan"
+                                        icon-name="utility:check"
+                                        onclick={handleLoanApprove}
+                                        class="slds-m-right_small">
+                                    </lightning-button>
+                                    <lightning-button
+                                        variant="neutral"
+                                        label="Conditional Approval"
+                                        icon-name="utility:priority"
+                                        onclick={handleLoanConditional}
+                                        class="slds-m-right_small">
+                                    </lightning-button>
+                                    <lightning-button
+                                        variant="destructive"
+                                        label="Decline"
+                                        icon-name="utility:close"
+                                        onclick={handleLoanDecline}>
+                                    </lightning-button>
+                                </div>
+
+                                <!-- Result Banner -->
+                                <template if:true={loan.decision}>
+                                    <div class={loanDecisionBannerClass}>
+                                        <lightning-icon icon-name={loanDecisionIcon} size="small" class="slds-m-right_small"></lightning-icon>
+                                        <div>
+                                            <strong>{loan.decision}</strong>
+                                            <p class="slds-m-top_xx-small">{loan.decisionNote}</p>
+                                        </div>
+                                    </div>
+                                    <div class="slds-m-top_medium action-row">
+                                        <lightning-button
+                                            variant="brand"
+                                            label="Send Result to Chat"
+                                            icon-name="utility:chat"
+                                            icon-position="right"
+                                            onclick={handleLoanSendToChat}>
+                                        </lightning-button>
+                                        <lightning-button
+                                            label="Start New Application"
+                                            icon-name="utility:refresh"
+                                            onclick={handleLoanReset}
+                                            class="slds-m-left_small">
+                                        </lightning-button>
+                                    </div>
+                                </template>
+
+                                <template if:false={loan.decision}>
+                                    <div class="slds-m-top_medium">
+                                        <lightning-button label="Back" onclick={handleLoanBack}></lightning-button>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- ═══════════════════════════════════════════ -->
+                <!-- TAB 3: KYC Screen Flow                     -->
+                <!-- ═══════════════════════════════════════════ -->
+                <template if:true={isFlowTab}>
+                    <div class="process-container flow-container">
+                        <template if:false={flowFinished}>
+                            <lightning-flow
+                                flow-api-name="wt__KYC_Onboarding_Flow"
+                                flow-input-variables={flowInputVariables}
+                                onstatuschange={handleFlowStatusChange}>
+                            </lightning-flow>
+                        </template>
+                        <template if:true={flowFinished}>
+                            <div class="flow-result-banner">
+                                <lightning-icon icon-name="utility:check" size="small" class="slds-m-right_small"></lightning-icon>
+                                <div>
+                                    <strong>Flow completed — result sent to chat</strong>
+                                    <p class="slds-m-top_xx-small">{flowResultNote}</p>
+                                </div>
+                            </div>
+                            <div class="slds-m-top_medium action-row">
+                                <lightning-button
+                                    variant="brand"
+                                    label="Run Flow Again"
+                                    icon-name="utility:refresh"
+                                    onclick={handleFlowReset}>
+                                </lightning-button>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+            </div><!-- slds-card__body -->
+
+            <!-- Activity Log -->
+            <div class="activity-section">
+                <button class="activity-toggle-bar" onclick={handleToggleActivity} type="button">
+                    <span class="activity-toggle-left">
+                        <lightning-icon icon-name="utility:terminal" size="x-small" class="activity-toggle-icon"></lightning-icon>
+                        <span class="activity-toggle-label">Activity Log</span>
+                        <template if:true={hasActivity}>
+                            <span class="activity-count">{activityCount}</span>
+                        </template>
+                    </span>
+                    <span class="activity-toggle-right">
+                        <span class="version-badge">v0.9</span>
+                        <lightning-icon icon-name={activityToggleIcon} size="x-small" class="activity-chevron"></lightning-icon>
+                    </span>
+                </button>
+                <template if:true={showActivity}>
+                    <div class="activity-console">
+                        <template if:true={hasActivity}>
+                            <template for:each={activity} for:item="entry">
+                                <div key={entry.id} class="activity-entry">
+                                    <div class="activity-entry-header">
+                                        <span class="activity-time">{entry.time}</span>
+                                        <span class="activity-label">{entry.label}</span>
+                                    </div>
+                                    <pre class="activity-detail">{entry.detail}</pre>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={hasActivity}>
+                            <div class="activity-empty">No events recorded yet.</div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div><!-- slds-card -->
+    </div><!-- fsc-demo-root -->
+</template>

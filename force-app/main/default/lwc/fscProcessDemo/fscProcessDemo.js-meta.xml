@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__RecordPage,lightning__HomePage">
+            <property name="clientName" type="String" label="Client Name" description="Pre-fills client name in KYC, Loan and Flow tabs."/>
+            <property name="clientId" type="String" label="Client ID" description="CRM identifier shown in the card header badge."/>
+            <property name="dateOfBirth" type="String" label="Date of Birth" description="ISO date YYYY-MM-DD — pre-fills DOB in KYC and Flow tabs."/>
+            <property name="nationality" type="String" label="Nationality" description="Pre-fills nationality dropdown in KYC and Flow tabs."/>
+            <property name="startDate" type="String" label="Process Start Date" description="ISO date YYYY-MM-DD used as default start date."/>
+            <property name="initialTab" type="String" label="Initial Tab" description="Tab to open on load: kyc, loan, or flow." default="kyc"/>
+            <property name="loanAmount" type="Integer" label="Loan Amount pre-fill" description="Pre-fills the loan amount in the Loan Application tab."/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

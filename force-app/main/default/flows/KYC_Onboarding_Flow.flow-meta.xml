@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <description>KYC &amp; Client Onboarding screen flow — collects client information, document details, risk indicators and records a compliance decision.</description>
+    <label>KYC Onboarding Flow</label>
+    <processType>Flow</processType>
+    <status>Active</status>
+    <interviewLabel>KYC Onboarding Flow {!$Flow.CurrentDateTime}</interviewLabel>
+
+    <!-- ── Input variables (pre-fillable via lightning-flow) ── -->
+    <variables>
+        <name>inputClientName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value><stringValue></stringValue></value>
+    </variables>
+    <variables>
+        <name>inputDateOfBirth</name>
+        <dataType>Date</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>inputNationality</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value><stringValue></stringValue></value>
+    </variables>
+    <variables>
+        <name>inputStartDate</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+    <!-- ── Output variables (returned to LWC on FINISHED) ── -->
+    <variables>
+        <name>outputClientName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>outputRiskRating</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>outputDecision</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+
+    <!-- ── Choice sets ── -->
+    <choices>
+        <name>choiceNL</name><choiceText>Dutch</choiceText><dataType>String</dataType>
+        <value><stringValue>Dutch</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceBE</name><choiceText>Belgian</choiceText><dataType>String</dataType>
+        <value><stringValue>Belgian</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceDE</name><choiceText>German</choiceText><dataType>String</dataType>
+        <value><stringValue>German</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceGB</name><choiceText>British</choiceText><dataType>String</dataType>
+        <value><stringValue>British</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceOther</name><choiceText>Other</choiceText><dataType>String</dataType>
+        <value><stringValue>Other</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceRetail</name><choiceText>Retail</choiceText><dataType>String</dataType>
+        <value><stringValue>Retail</stringValue></value>
+    </choices>
+    <choices>
+        <name>choicePrivateBanking</name><choiceText>Private Banking</choiceText><dataType>String</dataType>
+        <value><stringValue>Private Banking</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceCorporate</name><choiceText>Corporate</choiceText><dataType>String</dataType>
+        <value><stringValue>Corporate</stringValue></value>
+    </choices>
+    <choices>
+        <name>choicePassport</name><choiceText>Passport</choiceText><dataType>String</dataType>
+        <value><stringValue>Passport</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceNationalId</name><choiceText>National ID Card</choiceText><dataType>String</dataType>
+        <value><stringValue>National ID Card</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceDrivingLicence</name><choiceText>Driving Licence</choiceText><dataType>String</dataType>
+        <value><stringValue>Driving Licence</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceNotPEP</name><choiceText>Not PEP</choiceText><dataType>String</dataType>
+        <value><stringValue>Not PEP</stringValue></value>
+    </choices>
+    <choices>
+        <name>choicePEP</name><choiceText>PEP (Politically Exposed Person)</choiceText><dataType>String</dataType>
+        <value><stringValue>PEP</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceRelatedPEP</name><choiceText>Related to PEP</choiceText><dataType>String</dataType>
+        <value><stringValue>Related to PEP</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceSanctionsClear</name><choiceText>Clear</choiceText><dataType>String</dataType>
+        <value><stringValue>Clear</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceSanctionsPossible</name><choiceText>Possible Match — Review Required</choiceText><dataType>String</dataType>
+        <value><stringValue>Possible Match</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceSanctionsMatch</name><choiceText>Match Found</choiceText><dataType>String</dataType>
+        <value><stringValue>Match Found</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceSOFEmployment</name><choiceText>Employment</choiceText><dataType>String</dataType>
+        <value><stringValue>Employment</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceSOFBusiness</name><choiceText>Business Income</choiceText><dataType>String</dataType>
+        <value><stringValue>Business Income</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceSOFInheritance</name><choiceText>Inheritance</choiceText><dataType>String</dataType>
+        <value><stringValue>Inheritance</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceSOFInvestment</name><choiceText>Investment Returns</choiceText><dataType>String</dataType>
+        <value><stringValue>Investment Returns</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceDecisionApprove</name><choiceText>Approve Onboarding</choiceText><dataType>String</dataType>
+        <value><stringValue>Approved</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceDecisionReview</name><choiceText>Request More Information</choiceText><dataType>String</dataType>
+        <value><stringValue>Review Required</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceDecisionReject</name><choiceText>Reject Application</choiceText><dataType>String</dataType>
+        <value><stringValue>Rejected</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceRiskLow</name><choiceText>Low</choiceText><dataType>String</dataType>
+        <value><stringValue>Low</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceRiskMedium</name><choiceText>Medium</choiceText><dataType>String</dataType>
+        <value><stringValue>Medium</stringValue></value>
+    </choices>
+    <choices>
+        <name>choiceRiskHigh</name><choiceText>High</choiceText><dataType>String</dataType>
+        <value><stringValue>High</stringValue></value>
+    </choices>
+
+    <!-- ── Start → Screen 1 ── -->
+    <start>
+        <locationX>176</locationX>
+        <locationY>48</locationY>
+        <connector>
+            <targetReference>screen_client_info</targetReference>
+        </connector>
+    </start>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Screen 1 — Client Information                                     -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <screens>
+        <name>screen_client_info</name>
+        <label>Client Information</label>
+        <locationX>176</locationX>
+        <locationY>160</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>screen_document_verification</targetReference>
+        </connector>
+        <fields>
+            <name>hdr_client_info</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;b&gt;Step 1 of 3 — Client Information&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Enter the client&apos;s personal details to begin the KYC process.&lt;/p&gt;</fieldText>
+        </fields>
+        <fields>
+            <name>fieldClientName</name>
+            <fieldType>InputField</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Full Legal Name</fieldText>
+            <isRequired>true</isRequired>
+            <defaultValue>
+                <elementReference>inputClientName</elementReference>
+            </defaultValue>
+        </fields>
+        <fields>
+            <name>fieldDateOfBirth</name>
+            <fieldType>InputField</fieldType>
+            <dataType>Date</dataType>
+            <fieldText>Date of Birth</fieldText>
+            <isRequired>true</isRequired>
+            <defaultValue>
+                <elementReference>inputDateOfBirth</elementReference>
+            </defaultValue>
+        </fields>
+        <fields>
+            <name>fieldNationality</name>
+            <fieldType>DropdownBox</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Nationality</fieldText>
+            <isRequired>true</isRequired>
+            <defaultValue>
+                <elementReference>inputNationality</elementReference>
+            </defaultValue>
+            <choiceReferences>choiceNL</choiceReferences>
+            <choiceReferences>choiceBE</choiceReferences>
+            <choiceReferences>choiceDE</choiceReferences>
+            <choiceReferences>choiceGB</choiceReferences>
+            <choiceReferences>choiceOther</choiceReferences>
+        </fields>
+        <fields>
+            <name>fieldClientType</name>
+            <fieldType>RadioButtons</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Client Type</fieldText>
+            <isRequired>true</isRequired>
+            <choiceReferences>choiceRetail</choiceReferences>
+            <choiceReferences>choicePrivateBanking</choiceReferences>
+            <choiceReferences>choiceCorporate</choiceReferences>
+        </fields>
+        <fields>
+            <name>fieldEmail</name>
+            <fieldType>InputField</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Email Address</fieldText>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Screen 2 — Document Verification                                  -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <screens>
+        <name>screen_document_verification</name>
+        <label>Document Verification</label>
+        <locationX>176</locationX>
+        <locationY>280</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>screen_risk_decision</targetReference>
+        </connector>
+        <fields>
+            <name>hdr_docs</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;b&gt;Step 2 of 3 — Document Verification&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Record the identity document details provided by the client.&lt;/p&gt;</fieldText>
+        </fields>
+        <fields>
+            <name>fieldDocType</name>
+            <fieldType>RadioButtons</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Document Type</fieldText>
+            <isRequired>true</isRequired>
+            <choiceReferences>choicePassport</choiceReferences>
+            <choiceReferences>choiceNationalId</choiceReferences>
+            <choiceReferences>choiceDrivingLicence</choiceReferences>
+        </fields>
+        <fields>
+            <name>fieldDocNumber</name>
+            <fieldType>InputField</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Document Number</fieldText>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>fieldDocExpiry</name>
+            <fieldType>InputField</fieldType>
+            <dataType>Date</dataType>
+            <fieldText>Document Expiry Date</fieldText>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>fieldDocIssuingCountry</name>
+            <fieldType>InputField</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Issuing Country</fieldText>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Screen 3 — Risk Assessment &amp; Decision                         -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <screens>
+        <name>screen_risk_decision</name>
+        <label>Risk Assessment &amp; Decision</label>
+        <locationX>176</locationX>
+        <locationY>400</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>assign_outputs</targetReference>
+        </connector>
+        <fields>
+            <name>hdr_risk</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;b&gt;Step 3 of 3 — Risk Assessment &amp;amp; Compliance Decision&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Complete the AML/CFT screening and record the compliance decision.&lt;/p&gt;</fieldText>
+        </fields>
+        <fields>
+            <name>fieldPEPStatus</name>
+            <fieldType>RadioButtons</fieldType>
+            <dataType>String</dataType>
+            <fieldText>PEP Status</fieldText>
+            <isRequired>true</isRequired>
+            <choiceReferences>choiceNotPEP</choiceReferences>
+            <choiceReferences>choicePEP</choiceReferences>
+            <choiceReferences>choiceRelatedPEP</choiceReferences>
+        </fields>
+        <fields>
+            <name>fieldSanctions</name>
+            <fieldType>RadioButtons</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Sanctions Screening Result</fieldText>
+            <isRequired>true</isRequired>
+            <choiceReferences>choiceSanctionsClear</choiceReferences>
+            <choiceReferences>choiceSanctionsPossible</choiceReferences>
+            <choiceReferences>choiceSanctionsMatch</choiceReferences>
+        </fields>
+        <fields>
+            <name>fieldSourceOfFunds</name>
+            <fieldType>DropdownBox</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Source of Funds</fieldText>
+            <isRequired>true</isRequired>
+            <choiceReferences>choiceSOFEmployment</choiceReferences>
+            <choiceReferences>choiceSOFBusiness</choiceReferences>
+            <choiceReferences>choiceSOFInheritance</choiceReferences>
+            <choiceReferences>choiceSOFInvestment</choiceReferences>
+        </fields>
+        <fields>
+            <name>fieldRiskRating</name>
+            <fieldType>RadioButtons</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Overall Risk Rating</fieldText>
+            <isRequired>true</isRequired>
+            <choiceReferences>choiceRiskLow</choiceReferences>
+            <choiceReferences>choiceRiskMedium</choiceReferences>
+            <choiceReferences>choiceRiskHigh</choiceReferences>
+        </fields>
+        <fields>
+            <name>hdr_decision</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;b&gt;Compliance Decision&lt;/b&gt;&lt;/p&gt;</fieldText>
+        </fields>
+        <fields>
+            <name>fieldDecision</name>
+            <fieldType>RadioButtons</fieldType>
+            <dataType>String</dataType>
+            <fieldText>Select Decision</fieldText>
+            <isRequired>true</isRequired>
+            <choiceReferences>choiceDecisionApprove</choiceReferences>
+            <choiceReferences>choiceDecisionReview</choiceReferences>
+            <choiceReferences>choiceDecisionReject</choiceReferences>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Confirmation screen — Finish triggers the LWC FINISHED event      -->
+    <!-- (must appear before <assignments> to satisfy Flow XSD ordering)   -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <screens>
+        <name>screen_confirmation</name>
+        <label>KYC Complete</label>
+        <locationX>176</locationX>
+        <locationY>640</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>hdr_confirmation</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;b&gt;KYC Process Complete&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Client: &lt;b&gt;{!fieldClientName}&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Risk Rating: &lt;b&gt;{!fieldRiskRating}&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Decision: &lt;b&gt;{!fieldDecision}&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Click &lt;i&gt;Finish&lt;/i&gt; to send the result back to the chat window.&lt;/p&gt;</fieldText>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Assignment — write screen values to output variables              -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <assignments>
+        <name>assign_outputs</name>
+        <label>Set Output Variables</label>
+        <locationX>176</locationX>
+        <locationY>520</locationY>
+        <assignmentItems>
+            <assignToReference>outputClientName</assignToReference>
+            <operator>Assign</operator>
+            <value><elementReference>fieldClientName</elementReference></value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>outputRiskRating</assignToReference>
+            <operator>Assign</operator>
+            <value><elementReference>fieldRiskRating</elementReference></value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>outputDecision</assignToReference>
+            <operator>Assign</operator>
+            <value><elementReference>fieldDecision</elementReference></value>
+        </assignmentItems>
+        <connector>
+            <targetReference>screen_confirmation</targetReference>
+        </connector>
+    </assignments>
+
+</Flow>

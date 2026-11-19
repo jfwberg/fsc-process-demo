@@ -1,0 +1,19 @@
+# Salesforce DX
+.sfdx/
+.sf/
+
+# Claude Code / agent tools
+.claude/
+.agents/
+
+# Node
+node_modules/
+*.lock
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
