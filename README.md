@@ -66,6 +66,32 @@ sf package install --package 04tP3000002Ke1lIAC --target-org <your-org> --wait 1
 sf package install --package 04tak000000vJCPAA2 --target-org <your-org> --wait 10
 ```
 
+## Agent utterances
+
+Example prompts for testing the component via an AI agent in Microsoft Teams. The agent maps these to the component's input properties and opens the app pre-populated.
+
+**KYC & Onboarding**
+
+> Start a KYC onboarding for John Smith, date of birth 15 March 1985, British nationality, client ID C-10042.
+
+> Open the KYC process for Maria Garcia, born on 1990-07-22, Spanish nationality.
+
+> Run onboarding for client Wei Zhang, DOB 1978-11-03, Chinese national, ID C-20017.
+
+**Loan Application**
+
+> Open a loan application for Sarah Johnson, client ID C-30088, requesting £250,000.
+
+> Start a mortgage application for David Okafor, born 1982-04-10, loan amount £180,000.
+
+> I need to apply for a £500,000 business loan for Emma Müller, client ID C-40055.
+
+**Screen Flow**
+
+> Open the KYC flow for Thomas Eriksson, DOB 1975-09-30, Swedish national, client ID C-50011.
+
+---
+
 ## Deploy
 
 ```bash
