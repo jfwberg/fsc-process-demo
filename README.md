@@ -42,6 +42,30 @@ Package: FSC Process Demo
 Namespace: wt
 ```
 
+### Dependency
+
+| | |
+|---|---|
+| **Name** | MCP App Bridge |
+| **Version** | 0.11.0-1 |
+| **Package ID** | [04tP3000002Ke1lIAC](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tP3000002Ke1lIAC) |
+
+```bash
+sf package install --package 04tP3000002Ke1lIAC --target-org <your-org> --wait 10
+```
+
+### FSC Process Demo
+
+| | |
+|---|---|
+| **Name** | FSC Process Demo |
+| **Version** | 0.2.0-1 |
+| **Package ID** | [04tak000000vJCPAA2](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tak000000vJCPAA2) |
+
+```bash
+sf package install --package 04tak000000vJCPAA2 --target-org <your-org> --wait 10
+```
+
 ## Deploy
 
 ```bash
